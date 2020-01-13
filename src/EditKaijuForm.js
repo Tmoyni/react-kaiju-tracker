@@ -3,6 +3,9 @@ import React from 'react'
 class EditKaijuForm extends React.Component {
 
   render() {
+    console.log(this.props)
+
+    
     return (
       <>
         <form className='kaiju-card-edit-form'>

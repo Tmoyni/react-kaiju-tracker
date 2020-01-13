@@ -11,18 +11,86 @@ import * as requests from './requests'
 class KaijuContainer extends React.Component {
 
   state = {
-    kaijus: []
+    kaijus: [],
+    createName: "",
+    createPower: "",
+    createImage: ""
+  }
+  
+  componentDidMount() {
+    requests.fetchKaijus()
+   .then(allKaijus => {
+     this.setState({ 
+       kaijus: allKaijus
+      })
+   })
   }
 
+  updateName = (newName) => {
+    this.setState({
+      createName: newName
+    })
+  }
+
+  updatePower = (newPower) => {
+    this.setState({
+      createPower: newPower
+    })
+  }
+
+  updateImage = (newImage) => {
+    this.setState({
+      createImage: newImage
+    })
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault()
+    fetch('http://localhost:4000/kaijus/', {
+      method: 'POST',
+      headers: {"Content-Type": "application/json" },
+      body: JSON.stringify ({
+        name: `${this.state.createName}`,
+        power: `${this.state.createPower}`,
+        image: `${this.state.createImage}`
+      })
+    }).then( () => requests.fetchKaijus()
+      .then(allKaijus => {
+        this.setState({ 
+          kaijus: allKaijus
+         })
+      })
+    ).then(this.setState({ 
+         
+      
+      createName: "",
+      createPower: "",
+      createImage: ""
+    }))
+  }
+
+
   render() {
-    return (
+
+    let kaijusArray = this.state.kaijus.map(kaijuObj => 
+      <KaijuCard kaiju={kaijuObj} key={kaijuObj.id}/> )
+
+     return (
       <>
 
-        <CreateKaijuForm />
+        <CreateKaijuForm 
+            createName={this.state.createName} 
+            createPower={this.state.createPower} 
+            createImage={this.state.createImage}
+            updateName={this.updateName}
+            updatePower={this.updatePower}
+            updateImage={this.updateImage}
+            handleSubmit={this.handleSubmit}
+        />
 
         <div id='kaiju-container'>
 
-          {/* Kaiju cards should go in here! */}
+          {kaijusArray}
 
         </div>
 
